@@ -1,6 +1,7 @@
 // import React from "react";
 import { View, StyleSheet, ImageBackground } from "react-native";
 import RegistrationScreen from "./Screens/RegistrationScreen";
+import LoginScreen from "./Screens/LoginScreen";
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
         resizeMode="cover"
       >
         <RegistrationScreen />
+        {/* <LoginScreen /> */}
       </ImageBackground>
     </View>
   );
