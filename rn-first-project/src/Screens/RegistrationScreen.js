@@ -12,13 +12,14 @@ import {
   Text,
   TouchableOpacity,
   Image,
+  ImageBackground,
 } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
 
-const RegistrationScreen = () => {
+const RegistrationScreen = ({ navigation }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -46,6 +47,7 @@ const RegistrationScreen = () => {
 
   const onLogin = () => {
     Alert.alert("Данные ввода:", `${name} + ${password} +${email}`);
+    navigation.navigate("Home");
   };
 
   if (!fontsLoaded) {
@@ -55,75 +57,86 @@ const RegistrationScreen = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container} onLayout={onLayoutRootView}>
-        <View style={styles.bgfon}>
-          <View style={styles.avatar}>
-            <View style={styles.addFoto}>
-              <Image
-                source={require("../images/Union.png")}
-                style={styles.add}
-                resizeMode="cover"
-              ></Image>
+        <ImageBackground
+          source={require("../images/PhotoBG.png")}
+          style={styles.image}
+          resizeMode="cover"
+        >
+          <View style={styles.bgfon}>
+            <View style={styles.avatar}>
+              <View style={styles.addFoto}>
+                <Image
+                  source={require("../images/Union.png")}
+                  style={styles.add}
+                  resizeMode="cover"
+                ></Image>
+              </View>
             </View>
-          </View>
-          <Text style={styles.title}>Регистрация</Text>
-          <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
-          >
-            <TextInput
-              value={name}
-              onChangeText={nameHandler}
-              placeholder="Логин"
-              placeholderTextColor="#BDBDBD"
-              style={
-                focusInputName !== "name"
-                  ? styles.input
-                  : { ...styles.input, ...styles.inputFocus }
-              }
-              onSubmitEditing={Keyboard.dismiss}
-              onFocus={() => setFocusInputName("name")}
-              onBlur={() => setFocusInputName("")}
-            />
-            <TextInput
-              value={email}
-              onChangeText={emailHandler}
-              placeholder="Почта"
-              placeholderTextColor="#BDBDBD"
-              style={
-                focusInputName !== "email"
-                  ? styles.input
-                  : { ...styles.input, ...styles.inputFocus }
-              }
-              onSubmitEditing={Keyboard.dismiss}
-              onFocus={() => setFocusInputName("email")}
-              onBlur={() => setFocusInputName("")}
-            />
-            <View>
+            <Text style={styles.title}>Регистрация</Text>
+            <KeyboardAvoidingView
+              behavior={Platform.OS == "ios" ? "padding" : "height"}
+            >
               <TextInput
-                value={password}
-                onChangeText={passwordHandler}
-                placeholder="Пароль"
+                value={name}
+                onChangeText={nameHandler}
+                placeholder="Логин"
                 placeholderTextColor="#BDBDBD"
-                secureTextEntry={show}
                 style={
-                  focusInputName !== "password"
+                  focusInputName !== "name"
                     ? styles.input
                     : { ...styles.input, ...styles.inputFocus }
                 }
                 onSubmitEditing={Keyboard.dismiss}
-                onFocus={() => setFocusInputName("password")}
+                onFocus={() => setFocusInputName("name")}
                 onBlur={() => setFocusInputName("")}
               />
+              <TextInput
+                value={email}
+                onChangeText={emailHandler}
+                placeholder="Почта"
+                placeholderTextColor="#BDBDBD"
+                style={
+                  focusInputName !== "email"
+                    ? styles.input
+                    : { ...styles.input, ...styles.inputFocus }
+                }
+                onSubmitEditing={Keyboard.dismiss}
+                onFocus={() => setFocusInputName("email")}
+                onBlur={() => setFocusInputName("")}
+              />
+              <View>
+                <TextInput
+                  value={password}
+                  onChangeText={passwordHandler}
+                  placeholder="Пароль"
+                  placeholderTextColor="#BDBDBD"
+                  secureTextEntry={show}
+                  style={
+                    focusInputName !== "password"
+                      ? styles.input
+                      : { ...styles.input, ...styles.inputFocus }
+                  }
+                  onSubmitEditing={Keyboard.dismiss}
+                  onFocus={() => setFocusInputName("password")}
+                  onBlur={() => setFocusInputName("")}
+                />
 
-              <Text onPress={isShow} style={styles.show}>
-                {show ? "Показать" : "Скрыть"}
-              </Text>
-            </View>
-          </KeyboardAvoidingView>
-          <TouchableOpacity style={styles.button} onPress={onLogin}>
-            <Text style={styles.textButton}>Зарегистрироваться</Text>
-          </TouchableOpacity>
-          <Text style={styles.enter}>Уже есть аккаунт? Войти</Text>
-        </View>
+                <Text onPress={isShow} style={styles.show}>
+                  {show ? "Показать" : "Скрыть"}
+                </Text>
+              </View>
+            </KeyboardAvoidingView>
+            <TouchableOpacity style={styles.button} onPress={onLogin}>
+              <Text style={styles.textButton}>Зарегистрироваться</Text>
+            </TouchableOpacity>
+            <Text
+              style={styles.enter}
+              onPress={() => navigation.navigate("Login")}
+            >
+              Уже есть аккаунт? Войти
+            </Text>
+          </View>
+        </ImageBackground>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -180,7 +193,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   bgfon: {
-    flex: 0,
+    marginTop: "auto",
     alignItems: "center",
     width: 385,
     height: 549,
@@ -225,6 +238,10 @@ const styles = StyleSheet.create({
     marginRight: "auto",
     marginTop: "auto",
     marginBottom: "auto",
+  },
+  image: {
+    flex: 1,
+    justifyContent: "center",
   },
 });
 

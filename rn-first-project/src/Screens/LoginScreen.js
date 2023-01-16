@@ -9,13 +9,14 @@ import {
   Keyboard,
   Alert,
   TouchableWithoutFeedback,
+  ImageBackground,
 } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(true);
@@ -49,6 +50,7 @@ const LoginScreen = () => {
     }
     Alert.alert("Данные формы", `email: ${email} password: ${password}`);
     resetForm();
+    navigation.navigate("Home");
   };
   const resetForm = () => {
     setEmail("");
@@ -63,51 +65,60 @@ const LoginScreen = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container} onLayout={onLayoutRootView}>
-        <View style={styles.bgfon}>
-          <Text style={styles.title}>Войти</Text>
-          <View style={{ marginBottom: 16 }}>
-            <TextInput
-              style={
-                focusInputName !== "email"
-                  ? styles.input
-                  : { ...styles.input, ...styles.inputFocus }
-              }
-              placeholder="Адрес электронной почты"
-              placeholderTextColor="#BDBDBD"
-              value={email}
-              onChangeText={handleEmail}
-              onSubmitEditing={Keyboard.dismiss}
-              onFocus={() => setFocusInputName("email")}
-              onBlur={() => setFocusInputName("")}
-            />
-          </View>
-          <View style={{ marginBottom: 43 }}>
-            <TextInput
-              style={
-                focusInputName !== "password"
-                  ? styles.input
-                  : { ...styles.input, ...styles.inputFocus }
-              }
-              placeholder="Пароль"
-              placeholderTextColor="#BDBDBD"
-              secureTextEntry={show}
-              value={password}
-              onChangeText={handlePassword}
-              onSubmitEditing={Keyboard.dismiss}
-              onFocus={() => setFocusInputName("password")}
-              onBlur={() => setFocusInputName("")}
-            />
-            <Text style={styles.phShow} onPress={isShow}>
-              {show ? "Показать" : "Скрыть"}
+        <ImageBackground
+          source={require("../images/PhotoBG.png")}
+          style={styles.image}
+          resizeMode="cover"
+        >
+          <View style={styles.bgfon}>
+            <Text style={styles.title}>Войти</Text>
+            <View style={{ marginBottom: 16 }}>
+              <TextInput
+                style={
+                  focusInputName !== "email"
+                    ? styles.input
+                    : { ...styles.input, ...styles.inputFocus }
+                }
+                placeholder="Адрес электронной почты"
+                placeholderTextColor="#BDBDBD"
+                value={email}
+                onChangeText={handleEmail}
+                onSubmitEditing={Keyboard.dismiss}
+                onFocus={() => setFocusInputName("email")}
+                onBlur={() => setFocusInputName("")}
+              />
+            </View>
+            <View style={{ marginBottom: 43 }}>
+              <TextInput
+                style={
+                  focusInputName !== "password"
+                    ? styles.input
+                    : { ...styles.input, ...styles.inputFocus }
+                }
+                placeholder="Пароль"
+                placeholderTextColor="#BDBDBD"
+                secureTextEntry={show}
+                value={password}
+                onChangeText={handlePassword}
+                onSubmitEditing={Keyboard.dismiss}
+                onFocus={() => setFocusInputName("password")}
+                onBlur={() => setFocusInputName("")}
+              />
+              <Text style={styles.phShow} onPress={isShow}>
+                {show ? "Показать" : "Скрыть"}
+              </Text>
+            </View>
+            <TouchableOpacity style={styles.btnSubmit} onPress={submitForm}>
+              <Text style={styles.btnSubmitText}>Войти</Text>
+            </TouchableOpacity>
+            <Text
+              style={styles.textRegistration}
+              onPress={() => navigation.navigate("Registration")}
+            >
+              Нет аккаунта? Зарегистрироваться
             </Text>
           </View>
-          <TouchableOpacity style={styles.btnSubmit} onPress={submitForm}>
-            <Text style={styles.btnSubmitText}>Войти</Text>
-          </TouchableOpacity>
-          <Text style={styles.textRegistration}>
-            Нет аккаунта? Зарегистрироваться
-          </Text>
-        </View>
+        </ImageBackground>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -182,6 +193,10 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: "#1B4371",
     textAlign: "center",
+  },
+  image: {
+    flex: 1,
+    justifyContent: "center",
   },
 });
 

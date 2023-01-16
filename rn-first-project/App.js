@@ -1,29 +1,100 @@
-// import React from "react";
-import { View, StyleSheet, ImageBackground } from "react-native";
-import RegistrationScreen from "./Screens/RegistrationScreen";
-import LoginScreen from "./Screens/LoginScreen";
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { Feather } from "@expo/vector-icons";
+import { StyleSheet, TouchableOpacity } from "react-native";
+
+import LoginScreen from "./src/Screens/LoginScreen";
+import RegistrationScreen from "./src/Screens/RegistrationScreen";
+import Home from "./src/Screens/Home";
+import CommentsScreen from "./src/Screens/CommentsScreen";
+import MapScreen from "./src/Screens/MapScreen";
+
+const MainStack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <ImageBackground
-        source={require("./images/PhotoBG.png")}
-        style={styles.image}
-        resizeMode="cover"
-      >
-        <RegistrationScreen />
-        {/* <LoginScreen /> */}
-      </ImageBackground>
-    </View>
+    <NavigationContainer>
+      <MainStack.Navigator initialRouteName="Login">
+        <MainStack.Screen
+          options={{ headerShown: false }}
+          name="Registration"
+          component={RegistrationScreen}
+        />
+
+        <MainStack.Screen
+          options={{ headerShown: false }}
+          name="Login"
+          component={LoginScreen}
+        />
+        <MainStack.Screen
+          options={{ headerShown: false }}
+          name="Home"
+          component={Home}
+        />
+        <MainStack.Screen
+          name="Комментарии"
+          component={CommentsScreen}
+          options={({ navigation }) => ({
+            title: "Комментарии",
+            headerStyle: {
+              ...styles.headerContainer,
+            },
+            headerTintColor: "#fff",
+            headerTitleAlign: "center",
+            headerTitleStyle: {
+              ...styles.headerTitle,
+            },
+            headerLeft: () => (
+              <TouchableOpacity
+                style={styles.headerBtnBack}
+                onPress={navigation.goBack}
+              >
+                <Feather name="arrow-left" size={24} color="#BDBDBD" />
+              </TouchableOpacity>
+            ),
+          })}
+        />
+        <MainStack.Screen
+          name="Карта"
+          component={MapScreen}
+          options={({ navigation }) => ({
+            title: "Карта",
+            headerStyle: {
+              ...styles.headerContainer,
+            },
+            headerTintColor: "#fff",
+            headerTitleAlign: "center",
+            headerTitleStyle: {
+              ...styles.headerTitle,
+            },
+            headerLeft: () => (
+              <TouchableOpacity
+                style={styles.headerBtnBack}
+                onPress={navigation.goBack}
+              >
+                <Feather name="arrow-left" size={24} color="#BDBDBD" />
+              </TouchableOpacity>
+            ),
+          })}
+        />
+      </MainStack.Navigator>
+    </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  headerContainer: {
+    backgroundColor: "#FFF",
+    shadowColor: "rgba(0, 0, 0, 0.3)",
   },
-  image: {
-    flex: 1,
-    justifyContent: "center",
+  headerTitle: {
+    color: "#212121",
+    fontSize: 17,
+    lineHeight: 22,
+    letterSpacing: -0.408,
+  },
+  headerBtnBack: {
+    marginLeft: 20,
   },
 });
