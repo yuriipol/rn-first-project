@@ -1,23 +1,37 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Text,
+  Alert,
   View,
   TextInput,
   TouchableOpacity,
   Keyboard,
   TouchableWithoutFeedback,
+  Image,
 } from "react-native";
+import { Camera } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
 
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 import FontsHooks from "../shared/hooks/fontsHooks";
+import LocationHooks from "../shared/hooks/LocationHooks";
 import styles from "../styles/CreatePostsScreenStyle";
+import cameraStyles from "../styles/CameraStyle";
 
 const CreatePostsScreen = ({ navigation }) => {
   const { fontsLoaded, onLayoutRootView } = FontsHooks();
   const [title, setTitle] = useState("");
   const [place, setPlace] = useState("");
+  // const [camera, setCamera] = useState(null);
+  const [photo, setPhoto] = useState(null);
+  const [cameraRef, setCameraRef] = useState(null);
+  const [type, setType] = useState(Camera.Constants.Type.back);
+
+  const [hasPermission, setHasPermission] = useState(null);
+
+  const { location, getLocation } = LocationHooks();
 
   const handleTitle = (text) => {
     setTitle(text);
@@ -26,17 +40,100 @@ const CreatePostsScreen = ({ navigation }) => {
   const handlePlace = (text) => {
     setPlace(text);
   };
+
+  const validatePostForm = () => {
+    if (title === "" || place === "" || photo === null) {
+      return true;
+    }
+    return false;
+  };
+
+  const createPostSubmit = () => {
+    getLocation();
+    Alert.alert(
+      `Title: ${title} place:${place} Location:${location.coords.latitude} , ${location.coords.longitude}`
+    );
+    const data = { uri: photo, title, place, location };
+    clearPosts();
+    navigation.navigate("Публикации", data);
+  };
+  const clearPosts = () => {
+    setPhoto(null);
+    setTitle("");
+    setPlace("");
+  };
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      await MediaLibrary.requestPermissionsAsync();
+
+      setHasPermission(status === "granted");
+    })();
+  }, []);
+
+  if (hasPermission === null) {
+    return <View />;
+  }
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
+
+  // const takePhoto = async () => {
+  //   const photo = await camera.takePictureAsync();
+  //   console.log("camera----->>>", photo.uri);
+  // };
+
   if (!fontsLoaded) {
     return null;
   }
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container} onLayout={onLayoutRootView}>
         <View style={styles.imageContainer}>
           <View style={styles.imageWrapper}>
-            <TouchableOpacity style={styles.imageBtn}>
-              <Ionicons name="camera" size={24} color="#BDBDBD" />
-            </TouchableOpacity>
+            <Camera
+              style={cameraStyles.camera}
+              type={type}
+              ref={(ref) => {
+                setCameraRef(ref);
+              }}
+            >
+              <TouchableOpacity
+                style={cameraStyles.flipContainer}
+                onPress={() => {
+                  setType(
+                    type === Camera.Constants.Type.back
+                      ? Camera.Constants.Type.front
+                      : Camera.Constants.Type.back
+                  );
+                }}
+              >
+                <MaterialIcons
+                  name="flip-camera-android"
+                  size={24}
+                  color="#ffff"
+                  style={{ fontSize: 28, marginTop: 10, marginRight: 10 }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.imageBtn}
+                onPress={async () => {
+                  if (cameraRef) {
+                    const { uri } = await cameraRef.takePictureAsync();
+                    await MediaLibrary.createAssetAsync(uri);
+                    setPhoto(uri);
+                  }
+                }}
+              >
+                <Ionicons name="camera" size={24} color="#BDBDBD" />
+              </TouchableOpacity>
+              <View style={styles.photoContainer}>
+                {photo && (
+                  <Image style={styles.imagePhoto} source={{ uri: photo }} />
+                )}
+              </View>
+            </Camera>
           </View>
           <Text style={styles.imageContainerText}>Загрузите фото</Text>
         </View>
@@ -64,15 +161,30 @@ const CreatePostsScreen = ({ navigation }) => {
           </View>
         </View>
         <TouchableOpacity
-          style={{ ...styles.publishBtn, ...styles.disabledBtn }}
+          disabled={validatePostForm()}
+          onPress={() => createPostSubmit()}
+          style={
+            validatePostForm()
+              ? { ...styles.publishBtn, ...styles.disabledBtn }
+              : { ...styles.publishBtn, ...styles.enabledBtn }
+          }
         >
-          <Text style={{ ...styles.publishBtnText, ...styles.disabledBtnText }}>
+          <Text
+            style={
+              validatePostForm()
+                ? { ...styles.publishBtnText, ...styles.disabledBtnText }
+                : { ...styles.publishBtnText, ...styles.enabledBtnText }
+            }
+          >
             Опубликовать
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.deleteBtn}
-          onPress={() => navigation.navigate("Публикации")}
+          onPress={() => {
+            navigation.navigate("Публикации");
+            clearPosts();
+          }}
         >
           <Feather name="trash-2" size={24} color="#BDBDBD" />
         </TouchableOpacity>

@@ -95,5 +95,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F6F6",
     borderRadius: 20,
   },
+  photoContainer: {
+    position: "absolute",
+  },
+  imagePhoto: {
+    width: 359,
+    height: 240,
+  },
 });
 export default styles;
