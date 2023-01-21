@@ -9,78 +9,56 @@ import {
   SafeAreaView,
 } from "react-native";
 
-import styles from "../styles/ProfileListStyle.js";
+import styles from "../styles/PostsListStyle";
+
+import { addLike } from "../shared/requestFirebase/db/db";
 
 import LocationSVG from "../images/location.svg";
 import CommentSVG from "../images/comment.svg";
 import LikeSVG from "../images/Like.svg";
 
-const data = [
-  {
-    title: "Wood",
-    comment: 8,
-    like: 153,
-    place: "Ukraine",
-  },
-  {
-    title: "Закат на Черном море",
-    comment: 8,
-    like: 153,
-    place: "Ukraine",
-  },
-  {
-    title: "Старый домик в Венеции",
-    comment: 8,
-    like: 153,
-    place: "Italy",
-  },
-  {
-    title: "Bar",
-    comment: 8,
-    like: 153,
-    place: "Turkey",
-  },
-  {
-    title: "office",
-    comment: 8,
-    like: 153,
-    place: "Italy",
-  },
-  {
-    title: "road",
-    comment: 0,
-    like: 0,
-    place: "Germany",
-  },
-];
-
-const ProfileList = ({ navigation }) => {
+const PostsList = ({ navigation, dataPosts }) => {
   return (
     <SafeAreaView>
       <FlatList
         showsVerticalScrollIndicator={false}
-        data={data}
+        data={dataPosts}
         renderItem={({ item }) => (
           <View style={styles.publicationBox}>
             <View style={styles.imageBox}>
-              <Image style={styles.image}></Image>
+              <Image
+                style={styles.image}
+                source={{
+                  uri: item.photoUrl,
+                }}
+              ></Image>
             </View>
             <Text style={styles.title}>{item.title}</Text>
             <View style={styles.reportBox}>
               <TouchableOpacity
                 style={styles.commentBtn}
-                onPress={() => navigation.navigate("Комментарии")}
+                onPress={() =>
+                  navigation.navigate("Комментарии", {
+                    id: item.id,
+                    uidUser: item.uid,
+                    urlPhoto: item.photoUrl,
+                    nickName: item.userName,
+                  })
+                }
               >
                 <CommentSVG
                   style={
-                    item.comment > 0
+                    item.comments > 0
                       ? { ...styles.commentImg, color: "#FF6C00" }
                       : { ...styles.commentImg, color: "#BDBDBD" }
                   }
                 />
-                <Text style={styles.textBtn}>{item.comment}</Text>
+                <Text style={styles.textBtn}>{item.comments}</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.likeBtn}>
+              <TouchableOpacity
+                style={styles.likeBtn}
+                onPress={() => addLike({ id: item.id, like: item.like })}
+              >
                 <LikeSVG
                   style={
                     item.like > 0
@@ -92,7 +70,7 @@ const ProfileList = ({ navigation }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.placeBtn}
-                onPress={() => navigation.navigate("Карта")}
+                onPress={() => navigation.navigate("Карта", item.location)}
               >
                 <LocationSVG style={styles.locationImg} />
                 <Text>{item.place}</Text>
@@ -106,4 +84,4 @@ const ProfileList = ({ navigation }) => {
   );
 };
 
-export default ProfileList;
+export default PostsList;

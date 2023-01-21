@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import {
   Text,
@@ -10,11 +11,16 @@ import {
 
 import styles from "../styles/profileScreenStyle";
 
+import { logOutUser } from "../redux/auth/auth-operations";
+import { dataUser } from "../redux/auth/auth-selectors";
+
 import FontsHooks from "../shared/hooks/fontsHooks";
 
 import ProfileList from "../components/ProfileList";
 
 const ProfileScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const userInfo = useSelector(dataUser);
   const { fontsLoaded, onLayoutRootView } = FontsHooks();
 
   if (!fontsLoaded) {
@@ -38,11 +44,11 @@ const ProfileScreen = ({ navigation }) => {
           </View>
           <TouchableOpacity
             style={styles.btnLogOut}
-            onPress={() => navigation.navigate("Login")}
+            onPress={() => dispatch(logOutUser())}
           >
             <Feather name="log-out" size={24} color="#BDBDBD" />
           </TouchableOpacity>
-          <Text style={styles.title}>Natali Romanova</Text>
+          <Text style={styles.title}>{userInfo.userName}</Text>
           <ProfileList navigation={navigation} />
         </View>
       </ImageBackground>

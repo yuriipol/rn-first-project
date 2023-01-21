@@ -1,10 +1,13 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather, Ionicons } from "@expo/vector-icons";
 
 import { TouchableOpacity } from "react-native";
 
 import styles from "../styles/HomeStyle";
+
+import { logOutUser } from "../redux/auth/auth-operations";
 
 import ProfileScreen from "./ProfileScreen";
 import PostsScreen from "./PostsScreen";
@@ -13,6 +16,7 @@ import CreatePostsScreen from "./CreatePostsScreen";
 const Tabs = createBottomTabNavigator();
 
 const Home = () => {
+  const dispatch = useDispatch();
   return (
     <Tabs.Navigator
       initialRouteName="Публикации"
@@ -51,7 +55,7 @@ const Home = () => {
           headerRight: () => (
             <TouchableOpacity
               style={styles.headerBtnLogOut}
-              onPress={() => navigation.navigate("Login")}
+              onPress={() => dispatch(logOutUser())}
             >
               <Feather name="log-out" size={24} color="#BDBDBD" />
             </TouchableOpacity>

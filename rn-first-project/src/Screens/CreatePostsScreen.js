@@ -92,48 +92,51 @@ const CreatePostsScreen = ({ navigation }) => {
       <View style={styles.container} onLayout={onLayoutRootView}>
         <View style={styles.imageContainer}>
           <View style={styles.imageWrapper}>
-            <Camera
-              style={cameraStyles.camera}
-              type={type}
-              ref={(ref) => {
-                setCameraRef(ref);
-              }}
-            >
-              <TouchableOpacity
-                style={cameraStyles.flipContainer}
-                onPress={() => {
-                  setType(
-                    type === Camera.Constants.Type.back
-                      ? Camera.Constants.Type.front
-                      : Camera.Constants.Type.back
-                  );
+            {!photo && (
+              <Camera
+                style={cameraStyles.camera}
+                type={type}
+                ref={(ref) => {
+                  setCameraRef(ref);
                 }}
               >
-                <MaterialIcons
-                  name="flip-camera-android"
-                  size={24}
-                  color="#ffff"
-                  style={{ fontSize: 28, marginTop: 10, marginRight: 10 }}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.imageBtn}
-                onPress={async () => {
-                  if (cameraRef) {
-                    const { uri } = await cameraRef.takePictureAsync();
-                    await MediaLibrary.createAssetAsync(uri);
-                    setPhoto(uri);
-                  }
-                }}
-              >
-                <Ionicons name="camera" size={24} color="#BDBDBD" />
-              </TouchableOpacity>
-              <View style={styles.photoContainer}>
-                {photo && (
-                  <Image style={styles.imagePhoto} source={{ uri: photo }} />
-                )}
-              </View>
-            </Camera>
+                <TouchableOpacity
+                  style={cameraStyles.flipContainer}
+                  onPress={() => {
+                    setType(
+                      type === Camera.Constants.Type.back
+                        ? Camera.Constants.Type.front
+                        : Camera.Constants.Type.back
+                    );
+                  }}
+                >
+                  <MaterialIcons
+                    name="flip-camera-android"
+                    size={24}
+                    color="#ffff"
+                    style={{ fontSize: 28, marginTop: 10, marginRight: 10 }}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.imageBtn}
+                  onPress={async () => {
+                    if (cameraRef) {
+                      const { uri } = await cameraRef.takePictureAsync();
+                      await MediaLibrary.createAssetAsync(uri);
+                      setPhoto(uri);
+                    }
+                  }}
+                >
+                  <Ionicons name="camera" size={24} color="#BDBDBD" />
+                </TouchableOpacity>
+              </Camera>
+            )}
+
+            <View style={styles.photoContainer}>
+              {photo && (
+                <Image style={styles.imagePhoto} source={{ uri: photo }} />
+              )}
+            </View>
           </View>
           <Text style={styles.imageContainerText}>Загрузите фото</Text>
         </View>

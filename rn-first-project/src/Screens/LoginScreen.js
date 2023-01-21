@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   StyleSheet,
   Text,
@@ -14,9 +15,12 @@ import {
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
+import { logIn } from "../redux/auth/auth-operations";
+
 SplashScreen.preventAutoHideAsync();
 
 const LoginScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(true);
@@ -49,8 +53,9 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
     Alert.alert("Данные формы", `email: ${email} password: ${password}`);
+    // console.log(email, password);
+    dispatch(logIn({ email, password }));
     resetForm();
-    navigation.navigate("Home");
   };
   const resetForm = () => {
     setEmail("");

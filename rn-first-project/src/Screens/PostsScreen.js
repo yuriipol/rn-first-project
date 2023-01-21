@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 import { Text, View } from "react-native";
 
@@ -8,7 +9,10 @@ import styles from "../styles/PostScreenStyle";
 
 import PostsList from "../components/PostsList";
 
+import { dataUser } from "../redux/auth/auth-selectors";
+
 const PostsScreen = ({ navigation, route }) => {
+  const userInfo = useSelector(dataUser);
   const { fontsLoaded, onLayoutRootView } = FontsHooks();
 
   const [posts, setPosts] = useState([]);
@@ -28,8 +32,8 @@ const PostsScreen = ({ navigation, route }) => {
       <View style={styles.userContainer}>
         <View style={styles.avatarBox}></View>
         <View>
-          <Text style={styles.userName}>Natali Romanova</Text>
-          <Text style={styles.userEmail}>email@example.com</Text>
+          <Text style={styles.userName}>{userInfo.userName}</Text>
+          <Text style={styles.userEmail}>{userInfo.email}</Text>
         </View>
       </View>
 
